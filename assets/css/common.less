@@ -1,0 +1,94 @@
+@import 'ant-design-vue/dist/antd.less';
+.ant-layout {
+  min-height: 100vh;
+}
+.ant-layout-content {
+  padding: 0px 50px;
+  margin-top: 40px;
+}
+.ant-breadcrumb {
+  margin: @padding-sm 0;
+}
+
+.content {
+  background: #fff;
+}
+
+.main-table {
+
+  .ant-table-pagination.ant-pagination {
+    float: none !important;
+    text-align: center;
+  }
+}
+
+@spacerSizes: {
+  1: @padding-xs;
+  2: @padding-sm;
+  3: @padding-md;
+  4: @padding-lg;
+}
+@spacerPositions: {
+  t: top;
+  r: right;
+  b: bottom;
+  l: left;
+};
+
+each(@spacerSizes, {
+  .m@{key} {
+    margin: @value;
+  }
+
+  each(@spacerPositions, .(@v, @k, @i) {
+    .m@{key}@{k} {
+      margin-@{v}: @value;
+    }
+  });
+})
+
+each(@spacerPositions, {
+  .m0@{key} {
+    margin-@{value}: 0;
+  }
+});
+
+.m0 {
+  margin: 0;
+}
+
+.text-center {
+  text-align: center
+}
+
+// flex
+.flex {
+  display: flex;
+}
+.flex-auto {
+  flex: auto
+}
+.align-start {
+  align-items: flex-start;
+}
+.align-center {
+  align-items: center
+}
+.align-end {
+  align-items: flex-end;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-around {
+  justify-content: space-around;
+}

@@ -1,0 +1,317 @@
+import axios from 'axios'
+import { uniq, without } from 'lodash'
+
+const MASTER_API_URL =
+  'https://script.google.com/macros/s/AKfycbyx4n2syQvfdeUwBQ672YD8fVw4kLXnswWhIO7BTDAjPA9GT18/exec'
+
+export const state = () => {
+  return {
+    version: process.env.VERSION,
+    initialized: false,
+    types: ['短刀', '脇差', '打刀', '太刀', '大太刀', '槍', '薙刀', '剣'],
+    visuals: ['通常', '戦闘', '負傷', '必殺', '内番', '軽装'],
+    characters: []
+  }
+}
+export const getters = {
+  /**
+   * 種類フィルタ用
+   * @return {Array.<Object>}
+   */
+  typeOptions: (state) => {
+    return state.types.map((type) => ({ text: type, value: type }))
+  },
+
+  /**
+   * イラスト入手状況チェックボックス用
+   * @return {Array.<Object>}
+   */
+  visualOptions: (state) => {
+    return state.visuals.map((visual) => ({ text: visual, value: visual }))
+  },
+
+  /**
+   * 収集状況
+   * カウントするもの
+   * - 通常（口数）
+   * - 極
+   * - 髭切・膝丸の特1～3
+   * @return {string} 所持中/総数
+   */
+  collectionRate: (state) => {
+    let total = 0
+    let charTotal = 0
+    let char = 0
+    const detail = state.types.reduce((acc, cur) => {
+      acc[cur] = {
+        current: 0,
+        total: 0
+      }
+      return acc
+    }, {})
+
+    const current = state.characters.reduce((acc, cur) => {
+      // 極データはスキップ
+      if (cur.extreme) return acc
+
+      const type = cur['種類']
+      detail[type].total++
+
+      // 所持
+      if (cur.ownership.includes('通常')) {
+        acc = acc + 1
+        detail[type].current++
+        char++
+      }
+
+      // 極
+      const ex = cur['極'] > 0 // １なら実装済み
+      acc = acc + (ex && cur.ownership.includes('極'))
+
+      // 特
+      const special = String(cur['特']).split(',')
+      let sp = special.length - 1
+
+      if (special.length > 1) {
+        special.forEach((sp, index) => {
+          const label = index > 0 ? `特${index + 1}` : '特'
+          acc = acc + cur.ownership.includes(label)
+        })
+      }
+
+      // ランクアップ後を別種としてカウント
+      if (['髭切', '膝丸'].includes(cur.name)) {
+        sp = sp + 1
+      }
+
+      charTotal++
+      total = total + 1 + ex + sp
+      return acc
+    }, 0)
+    return { current, total, char, charTotal, detail }
+  },
+
+  /**
+   * イラスト入手状況
+   */
+  visualRate(state) {
+    let total = 0
+    const detail = state.visuals.reduce((acc, cur) => {
+      acc[cur] = {
+        current: 0,
+        total: 0
+      }
+      return acc
+    }, {})
+
+    // 軽装は未実装のがあるので除外しておく
+    const visualBase = without(state.visuals, '軽装')
+
+    const current = state.characters.reduce((acc, cur) => {
+      // 極
+      const ex = cur['極'] > 0
+      // 総数カウントアップ
+      total += visualBase.length + Number(ex) * visualBase.length
+
+      // 詳細
+      visualBase.forEach((v) => {
+        detail[v].total += 1
+        detail[v].total += Number(ex) // 極
+      })
+      // 軽装
+      total += Number(cur['軽装'])
+      detail['軽装'].total += Number(cur['軽装'])
+
+      // 髭切と膝丸は特ごとにビジュアルが異なる
+      if (['髭切', '膝丸'].includes(cur.name)) {
+        // 特, 特2, 特3
+        const special = String(cur['特']).split(',')
+        // 総数カウントアップ
+        special.forEach((sp, index) => {
+          visualBase.forEach((v) => {
+            detail[v].total += 1
+          })
+        })
+      }
+
+      // 所持数カウントアップ
+      acc += cur.visual.length
+      if (cur.visual.length) {
+        cur.visual.forEach((v) => {
+          detail[v].current += 1
+        })
+      }
+
+      return acc
+    }, 0)
+
+    return { current, total, detail }
+  },
+
+  /**
+   * 入手済み男子
+   * 通常のチェックで入手済みとみなす
+   * @return {Array}
+   */
+  memberCharacters: (state) => {
+    return state.characters.filter((char) => char.ownership.includes('通常'))
+  },
+
+  /**
+   * 極を除く
+   * @return {Array}
+   */
+  normalCharacters: (state) => {
+    return state.characters.filter((char) => char.extreme === false)
+  },
+
+  /**
+   * 保存用データ
+   */
+  saveData: (state) => {
+    return state.characters.map((char) => {
+      return {
+        id: char.id,
+        visual: char.visual,
+        ownership: char.ownership
+      }
+    })
+  }
+}
+export const actions = {
+  async getData({ commit, dispatch }) {
+    console.log('🍡 Get master data form API...')
+    try {
+      const response = await axios.get(MASTER_API_URL)
+      const saveData = await dispatch('load')
+      commit('setCharacters', { master: response.data, saveData })
+      commit('setInitialized')
+      return {
+        statusText: 'success',
+        message: 'Get Data Completed'
+      }
+    } catch (e) {
+      console.error(e)
+      return {
+        statusText: 'error',
+        message: 'Get Data Failed'
+      }
+    }
+  },
+
+  async importData({ commit }, data) {
+    try {
+      const response = await axios.get(MASTER_API_URL)
+
+      commit('setCharacters', { master: response.data, saveData: data })
+      commit('setInitialized')
+      return {
+        statusText: 'success',
+        message: 'Import Data Completed'
+      }
+    } catch (e) {
+      console.error(e)
+      return {
+        statusText: 'error',
+        message: 'Import Data Failed'
+      }
+    }
+  },
+
+  /**
+   * ローカルストレージから読み込む
+   */
+  load() {
+    const data = localStorage.getItem('character')
+    if (data) {
+      return JSON.parse(data)
+    }
+    return []
+  },
+
+  /**
+   * LocalStorageに保存する
+   */
+  save({ getters }) {
+    localStorage.setItem('character', JSON.stringify(getters.saveData))
+  },
+
+  /**
+   * 初期化する
+   */
+  async reset({ dispatch }) {
+    console.log('🍡 Reset All Data ...')
+    localStorage.removeItem('character')
+    await dispatch('importData', [])
+  }
+}
+export const mutations = {
+  setInitialized(state) {
+    state.initialized = true
+  },
+
+  /**
+   * v-model 使うと厳格モードで怒られるため
+   * @see https://vuex.vuejs.org/ja/guide/forms.html
+   */
+  updateVisual(state, { character, visual }) {
+    character.visual = visual
+  },
+
+  setCharacters(state, { master, saveData }) {
+    state.characters = []
+
+    master.forEach((dat) => {
+      dat.visual = []
+      dat.ownership = []
+      dat.extreme = false
+
+      // ストレージデータで上書きする
+      if (saveData.length) {
+        const log = saveData.find((s) => s.id === dat.id)
+        if (log) {
+          // 念の為重複を削除する
+          dat.visual = uniq(log.visual)
+          dat.ownership = uniq(log.ownership)
+        }
+      }
+
+      // イラスト初期値
+      if (!dat.visual.length && dat.ownership.includes('通常')) {
+        dat.visual.push('通常')
+      }
+
+      state.characters.push(dat)
+
+      // 極を所持
+      if (dat.ownership.includes('極')) {
+        const ex = { ...dat }
+        ex.id = ex.id + 1
+        ex.name = `${ex.name} 【極】`
+        ex.visual = ['通常']
+        ex.extreme = true
+        state.characters.push(ex)
+      }
+
+      // 髭切と膝丸は特ごとにビジュアルが異なる
+      if (['髭切', '膝丸'].includes(dat.name)) {
+        // 特, 特2, 特3
+        const special = String(dat['特']).split(',')
+
+        if (special.length > 1) {
+          special.forEach((sp, index) => {
+            const label = index > 0 ? `特${index + 1}` : '特'
+            if (dat.ownership.includes(label)) {
+              const ex = { ...dat }
+              ex.id = ex.id + 1
+              ex.name = `${ex.name} 【${label}】`
+              ex.visual = ['通常']
+              ex.extreme = true
+              state.characters.push(ex)
+            }
+          })
+        }
+      }
+    })
+  }
+}
