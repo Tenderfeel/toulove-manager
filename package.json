@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "刀剣乱舞の本丸運営をサポートする審神者用管理ツールです",
   "author": "Tenderfeel",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
