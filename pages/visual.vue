@@ -23,6 +23,7 @@
                 <a-checkbox-group
                   :default-value="record.visual"
                   :options="getVisualOptions(record)"
+                  :disabled="record.disabled"
                   @change="onChange(record, $event)"
                 />
               </template>

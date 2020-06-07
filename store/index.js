@@ -296,6 +296,7 @@ export const mutations = {
         ex.name = `${ex.name} 【極】`
         ex.visual = ['通常']
         ex.extreme = true
+        dat.disabled = true // 通常をdisabled
         state.characters.push(ex)
       }
 
@@ -316,6 +317,7 @@ export const mutations = {
               state.characters.push(ex)
             }
           })
+          dat.disabled = true
         }
       }
     })
