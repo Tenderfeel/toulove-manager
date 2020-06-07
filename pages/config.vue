@@ -51,7 +51,7 @@
         <!-- 操作タブ -->
         <a-tab-pane key="2">
           <span slot="tab">
-            <a-icon type="setting" />
+            <a-icon type="tool" />
             操作
           </span>
 
