@@ -31,9 +31,16 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
 
+  meta: {
+    lang: 'ja',
+    ogHost: process.env.BASE_URL,
+    twitterCard: 'summary',
+    twitterCreator: '@Tenderfeel'
+  },
+
   manifest: {
-    name: encodeURIComponent(SITE_NAME),
-    short_name: encodeURIComponent(SITE_NAME),
+    name: SITE_NAME,
+    short_name: SITE_NAME,
     lang: 'ja',
     start_url: '.',
     display: 'standalone',
