@@ -18,16 +18,7 @@ export default {
    */
   head: {
     title: SITE_NAME,
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      {
-        hid: 'description',
-        name: 'description',
-        content: process.env.npm_package_description || ''
-      },
-      { name: 'msapplication-TileColor', content: '#ffffff' }
-    ],
+    meta: [{ name: 'msapplication-TileColor', content: '#ffffff' }],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
   },
 
