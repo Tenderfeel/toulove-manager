@@ -1,6 +1,6 @@
 <template>
   <a-layout-content>
-    <a-page-header title="所持状況">
+    <a-page-header title="所属状況">
       <template slot="extra">
         <a-tag
           >収集：{{
@@ -30,9 +30,9 @@
           }}</template>
           <template slot="ownership" slot-scope="text, record">
             <a-checkbox-group
-              v-model="record.ownership"
+              :default-value="record.ownership"
               :options="getOwnershipOptions(record)"
-              @change="onChange"
+              @change="onChange(record, $event)"
             />
           </template>
         </a-table>
@@ -82,15 +82,15 @@ export default {
           scopedSlots: { customRender: 'extreme' }
         },
         {
-          title: '所持',
+          title: '所属',
           dataIndex: 'ownership',
           filters: [
-            { text: '所持中', value: '所持中' },
-            { text: '未所持', value: '未所持' }
+            { text: '所属中', value: '所属中' },
+            { text: '未所属', value: '未所属' }
           ],
           scopedSlots: { customRender: 'ownership' },
           onFilter: (value, record) => {
-            if (value === '所持中') {
+            if (value === '所属中') {
               return record.ownership.includes('通常')
             }
             return record.ownership.includes('通常') === false
@@ -104,7 +104,8 @@ export default {
     ...mapGetters(['collectionRate', 'normalCharacters'])
   },
   methods: {
-    onChange(checkedList) {
+    onChange(character, ownership) {
+      this.$store.commit('updateOwnership', { character, ownership })
       this.$store.dispatch('save')
     },
     getOwnershipOptions(record) {

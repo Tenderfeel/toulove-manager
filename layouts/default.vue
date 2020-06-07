@@ -15,7 +15,7 @@
         </a-menu-item>
         <a-menu-item key="2">
           <router-link to="/ownership" exact
-            ><a-icon type="team" />所持</router-link
+            ><a-icon type="team" />所属</router-link
           >
         </a-menu-item>
         <a-menu-item key="3">

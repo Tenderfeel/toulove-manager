@@ -1,22 +1,24 @@
 # toulove-manager
 
-> 刀剣乱舞本丸管理ツール
+> 刀剣乱舞の本丸運営をサポートする審神者用管理ツールです
 
-## Build Setup
+[🍡**サイトへ移動**](#)
 
-```bash
-# install dependencies
-$ yarn install
+## できること
+- 所属状況の管理（通常, 特, 極ごとに）
+- イラスト回収状況の管理
+- 設定のインポート・エクスポート
 
-# serve with hot reload at localhost:3000
-$ yarn dev
+## 使い方
+1. **所属** で所属中の設定を行う
+2. **イラスト** でイラスト回収状況の設定を行う
 
-# build for production and launch server
-$ yarn build
-$ yarn start
+先に所属状況の設定を行ってください。  
+所属状況が設定されたら、イラスト所属状況に刀剣男士が表示されます。
 
-# generate static project
-$ yarn generate
-```
+## フィルタ
+テーブルヘッダのタイトル横にあるフィルタアイコンをクリックすると、  
+表示する刀剣男士のフィルタが行えます。  
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+通常は条件に該当する刀剣男士を表示しますが、イラスト入手のフィルタは、  
+選択したイラスト種類が未入手（＝チェックされていない）の刀剣男士を表示します。

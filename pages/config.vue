@@ -37,7 +37,7 @@
               <a-icon type="export" />
               エクスポート
             </template>
-            <p>所持状況、イラスト入手状況を出力します</p>
+            <p>所属状況、イラスト入手状況を出力します</p>
             <a-button
               type="primary"
               :disabled="!initialized || characters.length === 0"

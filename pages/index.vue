@@ -3,7 +3,7 @@
     <a-page-header title="本丸管理" :sub-title="`v${version}`" />
     <a-row :gutter="[16, 8]">
       <a-col :span="12">
-        <a-card title="所持状況">
+        <a-card title="所属状況">
           <nuxt-link slot="extra" to="/ownership"
             ><a-icon type="right"
           /></nuxt-link>
@@ -38,7 +38,7 @@
                 "
               />
               <div class="flex-auto m4l">
-                <a-statistic title="所持" :value="collectionRate.char">
+                <a-statistic title="所属" :value="collectionRate.char">
                   <template #suffix>
                     <span> / {{ collectionRate.charTotal }}口</span>
                   </template>

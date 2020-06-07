@@ -36,7 +36,7 @@ export const getters = {
    * - 通常（口数）
    * - 極
    * - 髭切・膝丸の特1～3
-   * @return {string} 所持中/総数
+   * @return {{ current: number, total: number, char:number, charTotal:number, detail:Object }}
    */
   collectionRate: (state) => {
     let total = 0
@@ -57,7 +57,7 @@ export const getters = {
       const type = cur['種類']
       detail[type].total++
 
-      // 所持
+      // 所属
       if (cur.ownership.includes('通常')) {
         acc = acc + 1
         detail[type].current++
@@ -93,6 +93,7 @@ export const getters = {
 
   /**
    * イラスト入手状況
+   * @return {{current:number, total:number, detail: Object}}
    */
   visualRate(state) {
     let total = 0
@@ -134,7 +135,7 @@ export const getters = {
         })
       }
 
-      // 所持数カウントアップ
+      // 所属数カウントアップ
       acc += cur.visual.length
       if (cur.visual.length) {
         cur.visual.forEach((v) => {
@@ -167,6 +168,7 @@ export const getters = {
 
   /**
    * 保存用データ
+   * @return {Array}
    */
   saveData: (state) => {
     return state.characters.map((char) => {
@@ -258,6 +260,10 @@ export const mutations = {
     character.visual = visual
   },
 
+  updateOwnership(state, { character, ownership }) {
+    character.ownership = ownership
+  },
+
   setCharacters(state, { master, saveData }) {
     state.characters = []
 
@@ -283,7 +289,7 @@ export const mutations = {
 
       state.characters.push(dat)
 
-      // 極を所持
+      // 極を所属
       if (dat.ownership.includes('極')) {
         const ex = { ...dat }
         ex.id = ex.id + 1

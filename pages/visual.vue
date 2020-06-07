@@ -78,7 +78,7 @@ export default {
           this.$createElement('a-empty', {
             props: {
               image: Empty.PRESENTED_IMAGE_SIMPLE,
-              description: '所持設定を行ってください'
+              description: '所属設定を行ってください'
             }
           })
         ]
