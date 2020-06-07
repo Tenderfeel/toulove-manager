@@ -11,21 +11,21 @@
         :style="{ lineHeight: '40px' }"
       >
         <a-menu-item key="1">
-          <router-link to="/" exact>Home</router-link>
+          <nuxt-link to="/" exact>Home</nuxt-link>
         </a-menu-item>
         <a-menu-item key="2">
-          <router-link to="/ownership" exact
-            ><a-icon type="team" />所属</router-link
+          <nuxt-link to="/ownership" exact
+            ><a-icon type="team" />所属</nuxt-link
           >
         </a-menu-item>
         <a-menu-item key="3">
-          <router-link to="/visual" exact
-            ><a-icon type="picture" />イラスト</router-link
+          <nuxt-link to="/visual" exact
+            ><a-icon type="picture" />イラスト</nuxt-link
           >
         </a-menu-item>
         <a-menu-item key="4">
-          <router-link to="/config" exact
-            ><a-icon type="setting" />設定</router-link
+          <nuxt-link to="/config" exact
+            ><a-icon type="setting" />設定</nuxt-link
           >
         </a-menu-item>
       </a-menu>
