@@ -124,6 +124,11 @@ export default {
 
       return options
     }
+  },
+  head() {
+    return {
+      title: `所属状況 - ${process.env.SITE_NAME}`
+    }
   }
 }
 </script>

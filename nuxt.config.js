@@ -1,5 +1,7 @@
 import p from './package.json'
 
+const SITE_NAME = '本丸管理'
+
 export default {
   mode: 'universal',
 
@@ -7,14 +9,15 @@ export default {
 
   env: {
     VERSION: p.version,
-    BASE_URL: process.env.BASE_URL
+    BASE_URL: process.env.BASE_URL,
+    SITE_NAME
   },
 
   /*
    ** Headers of the page
    */
   head: {
-    title: '本丸管理',
+    title: SITE_NAME,
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -29,8 +32,8 @@ export default {
   },
 
   manifest: {
-    name: '\u672C\u4E38\u7BA1\u7406',
-    short_name: '\u672C\u4E38\u7BA1\u7406',
+    name: encodeURIComponent(SITE_NAME),
+    short_name: encodeURIComponent(SITE_NAME),
     lang: 'ja',
     start_url: '.',
     display: 'standalone',

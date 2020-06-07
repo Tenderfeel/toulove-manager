@@ -194,8 +194,11 @@ export default {
         }
       })
     }
+  },
+  head() {
+    return {
+      title: `設定 - ${process.env.SITE_NAME}`
+    }
   }
 }
 </script>
-
-<style lang="css" scoped></style>

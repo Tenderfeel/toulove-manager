@@ -104,6 +104,11 @@ export default {
         return option
       })
     }
+  },
+  head() {
+    return {
+      title: `イラスト入手状況 - ${process.env.SITE_NAME}`
+    }
   }
 }
 </script>
