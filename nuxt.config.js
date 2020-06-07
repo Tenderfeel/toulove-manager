@@ -24,6 +24,8 @@ export default {
   meta: {
     lang: 'ja',
     name: SITE_NAME,
+    description: p.description,
+    author: p.author,
     ogHost: process.env.BASE_URL,
     twitterCard: 'summary',
     twitterCreator: '@Tenderfeel'
@@ -42,7 +44,7 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: { color: '#ffa0f3' },
   /*
    ** Global CSS
    */
