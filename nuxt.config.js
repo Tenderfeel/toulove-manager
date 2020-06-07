@@ -18,12 +18,12 @@ export default {
    */
   head: {
     title: SITE_NAME,
-    meta: [{ name: 'msapplication-TileColor', content: '#ffffff' }],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    meta: [{ name: 'msapplication-TileColor', content: '#ffffff' }]
   },
 
   meta: {
     lang: 'ja',
+    name: SITE_NAME,
     ogHost: process.env.BASE_URL,
     twitterCard: 'summary',
     twitterCreator: '@Tenderfeel'
