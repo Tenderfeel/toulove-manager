@@ -6,11 +6,23 @@ const MASTER_API_URL =
 
 export const state = () => {
   return {
+    // アプリバージョン
     version: process.env.VERSION,
+
+    // マスター取得状況
     initialized: false,
+
+    // 刀剣種類
     types: ['短刀', '脇差', '打刀', '太刀', '大太刀', '槍', '薙刀', '剣'],
+
+    // イラスト種類
     visuals: ['通常', '戦闘', '負傷', '必殺', '内番', '軽装'],
-    characters: []
+
+    // 刀剣男士
+    characters: [],
+
+    // エリア
+    areas: []
   }
 }
 export const getters = {
@@ -181,12 +193,16 @@ export const getters = {
   }
 }
 export const actions = {
+  /**
+   * Get master data from API
+   */
   async getData({ commit, dispatch }) {
     console.log('🍡 Get master data form API...')
     try {
       const response = await axios.get(MASTER_API_URL)
       const saveData = await dispatch('load')
-      commit('setCharacters', { master: response.data, saveData })
+      commit('setCharacters', { master: response.data.characters, saveData })
+      commit('setAreas', { master: response.data.areas })
       commit('setInitialized')
       return {
         statusText: 'success',
@@ -247,6 +263,7 @@ export const actions = {
     await dispatch('importData', [])
   }
 }
+
 export const mutations = {
   setInitialized(state) {
     state.initialized = true
@@ -264,6 +281,11 @@ export const mutations = {
     character.ownership = ownership
   },
 
+  setAreas(state, { master }) {
+    state.areas = master
+  },
+
+  // 刀剣男士
   setCharacters(state, { master, saveData }) {
     state.characters = []
 
