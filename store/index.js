@@ -264,6 +264,19 @@ export const actions = {
   }
 }
 
+// ストレージデータで上書きする
+function updateBySaveData(saveData, dat) {
+  if (saveData.length) {
+    const log = saveData.find((s) => s.id === dat.id)
+    if (log) {
+      // 念の為重複を削除する
+      dat.visual = uniq(log.visual)
+      dat.ownership = uniq(log.ownership)
+    }
+  }
+  return dat
+}
+
 export const mutations = {
   setInitialized(state) {
     state.initialized = true
@@ -294,15 +307,7 @@ export const mutations = {
       dat.ownership = []
       dat.extreme = false
 
-      // ストレージデータで上書きする
-      if (saveData.length) {
-        const log = saveData.find((s) => s.id === dat.id)
-        if (log) {
-          // 念の為重複を削除する
-          dat.visual = uniq(log.visual)
-          dat.ownership = uniq(log.ownership)
-        }
-      }
+      dat = updateBySaveData(saveData, dat)
 
       // イラスト初期値
       if (!dat.visual.length && dat.ownership.includes('通常')) {
@@ -313,12 +318,13 @@ export const mutations = {
 
       // 極を所属
       if (dat.ownership.includes('極')) {
-        const ex = { ...dat }
+        let ex = { ...dat }
         ex.id = ex.id + 1
         ex.name = `${ex.name} 【極】`
         ex.visual = ['通常']
         ex.extreme = true
         dat.disabled = true // 通常をdisabled
+        ex = updateBySaveData(saveData, ex)
         state.characters.push(ex)
       }
 
@@ -331,11 +337,12 @@ export const mutations = {
           special.forEach((sp, index) => {
             const label = index > 0 ? `特${index + 1}` : '特'
             if (dat.ownership.includes(label)) {
-              const ex = { ...dat }
+              let ex = { ...dat }
               ex.id = ex.id + 1
               ex.name = `${ex.name} 【${label}】`
               ex.visual = ['通常']
               ex.extreme = true
+              ex = updateBySaveData(saveData, ex)
               state.characters.push(ex)
             }
           })
