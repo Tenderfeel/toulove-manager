@@ -7,7 +7,7 @@
       <a-menu
         theme="dark"
         mode="horizontal"
-        :default-selected-keys="['1']"
+        :default-selected-keys="[selectedMenuKeys]"
         :style="{ lineHeight: '40px' }"
       >
         <a-menu-item key="1">
@@ -37,3 +37,17 @@
     </a-layout-footer>
   </a-layout>
 </template>
+
+<script>
+export default {
+  computed: {
+    selectedMenuKeys() {
+      return String(
+        ['index', 'ownership', 'visual', 'config'].findIndex(
+          (m) => m === this.$route.name
+        ) + 1
+      )
+    }
+  }
+}
+</script>
