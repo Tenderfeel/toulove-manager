@@ -71,7 +71,8 @@ export default {
           dataIndex: 'visual',
           filters: this.$store.getters.visualOptions,
           scopedSlots: { customRender: 'visual' },
-          onFilter: (value, record) => !record.visual.includes(value)
+          onFilter: (value, record) =>
+            !record.disabled && !record.visual.includes(value)
         }
       ],
       customizeRenderEmpty: () => {
