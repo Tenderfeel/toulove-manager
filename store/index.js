@@ -50,7 +50,7 @@ export const getters = {
 
   /**
    * エリア名
-   * @return {Object}
+   * @return {Object} { '1-1': { area: '函館', epoch: '維新の記憶' } }
    */
   areaLabels: (state) => {
     return state.areas.reduce((acc, cur) => {
@@ -230,6 +230,14 @@ export const getters = {
         ownership: char.ownership
       }
     })
+  },
+
+  findCharacterById: (state) => (id) => {
+    return state.characters.find((char) => char.id === id)
+  },
+
+  findDropById: (state) => (id) => {
+    return state.drops.find((drop) => drop.id === id)
   }
 }
 export const actions = {

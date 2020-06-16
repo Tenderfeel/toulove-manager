@@ -19,9 +19,12 @@
           :data-source="normalCharacters"
           :row-key="(record) => record.id"
         >
-          <template slot="name" slot-scope="text">
-            <a>{{ text }}</a>
-          </template>
+          <nuxt-link
+            slot="name"
+            slot-scope="text, record"
+            :to="{ name: 'drop-id', params: { id: record.id } }"
+            >{{ text }}</nuxt-link
+          >
           <template slot="extreme" slot-scope="text">{{
             text > 0 ? text : '-'
           }}</template>
@@ -53,13 +56,12 @@ export default {
           dataIndex: 'id',
           sorter: (a, b) => a.id - b.id,
           width: '3rem'
-          // fixed: "left"
         },
         {
           title: '刀名',
           dataIndex: 'name',
-          sorter: false
-          // fixed: "left"
+          sorter: false,
+          scopedSlots: { customRender: 'name' }
         },
         {
           title: '種類',

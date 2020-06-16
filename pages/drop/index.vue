@@ -13,7 +13,7 @@
             :key="option.value"
             :value="option.value"
           >
-            {{ option.label }}
+            {{ `【${option.value}】${option.label}` }}
           </a-select-option>
         </a-select>
       </template>
@@ -24,10 +24,14 @@
           :columns="columns"
           :data-source="epochsData"
           :row-key="(record) => record.id"
+          size="middle"
         >
-          <template slot="name" slot-scope="text">
-            <a>{{ text }}</a>
-          </template>
+          <nuxt-link
+            slot="name"
+            slot-scope="text, record"
+            :to="{ name: 'drop-id', params: { id: record.id } }"
+            >{{ text }}</nuxt-link
+          >
         </a-table>
       </div>
     </a-spin>
@@ -58,7 +62,8 @@ export default {
         {
           title: '刀名',
           dataIndex: 'name',
-          sorter: false
+          sorter: false,
+          scopedSlots: { customRender: 'name' }
         }
       ]
 
@@ -68,8 +73,13 @@ export default {
         const id = `${this.selectEpoch}-${i + 1}`
         if (this.areaLabels[id]) {
           columns.push({
-            title: this.areaLabels[id].area,
-            dataIndex: id
+            title: id,
+            children: [
+              {
+                title: this.areaLabels[id].area,
+                dataIndex: id
+              }
+            ]
           })
         }
       })
