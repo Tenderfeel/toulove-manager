@@ -7,7 +7,7 @@
       <a-menu
         theme="dark"
         mode="horizontal"
-        :default-selected-keys="[selectedMenuKeys]"
+        :selected-keys="[selectedMenuKeys]"
         :style="{ lineHeight: '40px' }"
       >
         <a-menu-item key="1">
@@ -48,8 +48,8 @@ export default {
   computed: {
     selectedMenuKeys() {
       return String(
-        ['index', 'ownership', 'visual', 'drop', 'config'].findIndex(
-          (m) => m === this.$route.name
+        ['index', 'ownership', 'visual', 'drop', 'config'].findIndex((m) =>
+          this.$route.name.includes(m)
         ) + 1
       )
     }
