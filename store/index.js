@@ -61,6 +61,9 @@ export const getters = {
       if (cur.id === '7-4') {
         area = area.replace('（長距離）', '')
       }
+      if (cur.id === '6-4') {
+        area = area.replace('（第１マップ）', '')
+      }
       acc[cur.id] = {
         area,
         epoch: cur.epoch
