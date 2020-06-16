@@ -24,6 +24,11 @@
           >
         </a-menu-item>
         <a-menu-item key="4">
+          <nuxt-link to="/drop" exact
+            ><a-icon type="cloud-download" />ドロップ</nuxt-link
+          >
+        </a-menu-item>
+        <a-menu-item key="5">
           <nuxt-link to="/config" exact
             ><a-icon type="setting" />設定</nuxt-link
           >
@@ -43,7 +48,7 @@ export default {
   computed: {
     selectedMenuKeys() {
       return String(
-        ['index', 'ownership', 'visual', 'config'].findIndex(
+        ['index', 'ownership', 'visual', 'drop', 'config'].findIndex(
           (m) => m === this.$route.name
         ) + 1
       )

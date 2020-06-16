@@ -6,6 +6,9 @@ const MASTER_API_URL =
 
 export const state = () => {
   return {
+    // 現在のエリア数
+    areaCount: 8,
+
     // アプリバージョン
     version: process.env.VERSION,
 
@@ -22,7 +25,10 @@ export const state = () => {
     characters: [],
 
     // エリア
-    areas: []
+    areas: [],
+
+    // ドロップ
+    drops: []
   }
 }
 export const getters = {
@@ -40,6 +46,40 @@ export const getters = {
    */
   visualOptions: (state) => {
     return state.visuals.map((visual) => ({ text: visual, value: visual }))
+  },
+
+  /**
+   * エリア名
+   * @return {Object}
+   */
+  areaLabels: (state) => {
+    return state.areas.reduce((acc, cur) => {
+      if (cur.map !== 1) {
+        return acc
+      }
+      let area = cur.area
+      if (cur.id === '7-4') {
+        area = area.replace('（長距離）', '')
+      }
+      acc[cur.id] = {
+        area,
+        epoch: cur.epoch
+      }
+      return acc
+    }, {})
+  },
+
+  /**
+   * 時代セレクトメニュー用
+   * @return {Array.<{label: string, value: number}>}
+   */
+  epochOptions: (state) => {
+    return state.areas
+      .filter((area) => /^\d-1$/.test(area.id) && area.map === 1)
+      .map((area) => ({
+        label: area.epoch,
+        value: Number(area.id.replace(/(\d)-\d/, '$1'))
+      }))
   },
 
   /**
@@ -203,6 +243,7 @@ export const actions = {
       const saveData = await dispatch('load')
       commit('setCharacters', { master: response.data.characters, saveData })
       commit('setAreas', { master: response.data.areas })
+      commit('setDrops', { master: response.data.drops })
       commit('setInitialized')
       return {
         statusText: 'success',
@@ -296,6 +337,10 @@ export const mutations = {
 
   setAreas(state, { master }) {
     state.areas = master
+  },
+
+  setDrops(state, { master }) {
+    state.drops = master
   },
 
   // 刀剣男士
