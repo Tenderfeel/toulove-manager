@@ -10,8 +10,9 @@
           :data-source="memoirs"
           :row-key="(record) => record.id"
         >
-          <template slot="epoch" slot-scope="text, record"
-            >{{ text }}<br />{{ record.area }}</template
+          <template slot="epoch" slot-scope="text, record">
+            <div>{{ epochAreaLabel(text, record.area).epoch }}</div>
+            <div>{{ epochAreaLabel(text, record.area).area }}</div></template
           >
           <template slot="member" slot-scope="text">
             <div v-for="(member, mi) in text.split(',')" :key="mi">
@@ -33,6 +34,7 @@ export default {
   name: 'MemoirIndex',
   data() {
     return {
+      selectEpoch: null,
       columns: [
         {
           title: '#',
@@ -43,16 +45,17 @@ export default {
         {
           title: 'タイトル',
           dataIndex: 'title',
-          sorter: false,
           scopedSlots: { customRender: 'title' }
         },
         {
           title: '時代/エリア',
           dataIndex: 'epoch',
-          sorter: false,
-          scopedSlots: { customRender: 'epoch' }
-          // filters: this.$store.getters.typeOptions,
-          // onFilter: (value, record) => record['種類'].indexOf(value) === 0
+          scopedSlots: { customRender: 'epoch' },
+          filters: this.$store.getters.epochOptions.map((epo) => {
+            epo.value = String(epo.value)
+            return epo
+          }),
+          onFilter: (value, record) => record.epoch === Number(value)
         },
         {
           title: '対象',
@@ -62,12 +65,12 @@ export default {
         {
           title: '状況',
           filters: [
-            { text: '完了', value: 1 },
-            { text: '未完了', value: 0 }
+            { text: '完了', value: '完了' },
+            { text: '未完了', value: '未完了' }
           ],
           scopedSlots: { customRender: 'complete' },
           onFilter: (value, record) => {
-            return record.complete === Boolean(value)
+            return record.complete === (value === '完了')
           }
         }
       ]
@@ -81,6 +84,14 @@ export default {
     onChange(e, memoir) {
       this.$store.commit('updateMemoir', { memoir, complete: e.target.checked })
       this.$store.dispatch('save')
+    },
+
+    /**
+     * @return {Object}
+     */
+    epochAreaLabel(epoch, area) {
+      if (epoch === 0) return { epoch: '指定なし', area: '' }
+      return this.areaLabels[`${epoch}-${area}`]
     }
   }
 }

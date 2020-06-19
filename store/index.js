@@ -77,13 +77,13 @@ export const getters = {
 
   /**
    * 時代セレクトメニュー用
-   * @return {Array.<{label: string, value: number}>}
+   * @return {Array.<{text: string, value: number}>}
    */
   epochOptions: (state) => {
     return state.areas
       .filter((area) => /^\d-1$/.test(area.id) && area.map === 1)
       .map((area) => ({
-        label: area.epoch,
+        text: area.epoch,
         value: Number(area.id.replace(/(\d)-\d/, '$1'))
       }))
   },
@@ -340,7 +340,7 @@ export const actions = {
   async reset({ dispatch }) {
     console.log('🍡 Reset All Data ...')
     localStorage.removeItem('character')
-    await dispatch('importData', [])
+    await dispatch('importData', { characters: [], memoirs: null })
   }
 }
 

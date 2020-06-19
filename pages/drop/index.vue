@@ -13,7 +13,7 @@
             :key="option.value"
             :value="option.value"
           >
-            {{ `【${option.value}】${option.label}` }}
+            {{ `【${option.value}】${option.text}` }}
           </a-select-option>
         </a-select>
       </template>
