@@ -121,12 +121,18 @@ export default {
 
       reader.onload = async (e) => {
         try {
-          const saveData = JSON.parse(e.target.result)
-          if (!saveData.length) {
+          let saveData = JSON.parse(e.target.result)
+          if (!saveData) {
+            this.$message.error('インポートできるデータがありませんでした')
+          }
+          if (isArray(saveData)) {
+            saveData = { characters: saveData, memoirs: null }
+          } else if (!Object.keys(saveData).length) {
             this.$message.error('インポートできるデータがありませんでした')
           }
           // 内容確認
-          const validate = saveData.every((dat) => {
+          // キャラクター
+          const validateCharacter = saveData.characters.every((dat) => {
             const keys = Object.keys(dat)
 
             if (keys.length !== 3) return false
@@ -137,7 +143,17 @@ export default {
 
             return true
           })
-          if (!validate) {
+
+          let validateMemoir = true
+
+          if (saveData.memoirs) {
+            // 回想
+            validateMemoir =
+              Object.keys(saveData.memoirs).length ===
+              this.$store.state.memoirs.length
+          }
+
+          if (!validateCharacter || !validateMemoir) {
             return this.$message.error(
               'データに問題があるため、インポートができませんでした'
             )

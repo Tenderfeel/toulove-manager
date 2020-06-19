@@ -28,7 +28,10 @@ export const state = () => {
     areas: [],
 
     // ドロップ
-    drops: []
+    drops: [],
+
+    // 回想
+    memoirs: []
   }
 }
 export const getters = {
@@ -222,17 +225,25 @@ export const getters = {
   },
 
   /**
-   * 保存用データ
-   * @return {Array}
+   * JSONファイル保存用データ
+   * @return {{characters: Array, memoir: Array}}
    */
   saveData: (state) => {
-    return state.characters.map((char) => {
+    const characters = state.characters.map((char) => {
       return {
         id: char.id,
         visual: char.visual,
         ownership: char.ownership
       }
     })
+    const memoirs = state.memoirs.reduce((acc, cur) => {
+      acc[cur.id] = cur.complete
+      return acc
+    }, {})
+    return {
+      characters,
+      memoirs
+    }
   },
 
   findCharacterById: (state) => (id) => {
@@ -255,6 +266,7 @@ export const actions = {
       commit('setCharacters', { master: response.data.characters, saveData })
       commit('setAreas', { master: response.data.areas })
       commit('setDrops', { master: response.data.drops })
+      commit('setMemoirs', { master: response.data.memoir, saveData })
       commit('setInitialized')
       return {
         statusText: 'success',
@@ -269,11 +281,22 @@ export const actions = {
     }
   },
 
-  async importData({ commit }, data) {
+  /**
+   * セーブデータのインポート
+   * @param {{characters: Array, memoirs:?Object}} saveData
+   */
+  async importData({ commit }, saveData) {
     try {
       const response = await axios.get(MASTER_API_URL)
 
-      commit('setCharacters', { master: response.data, saveData: data })
+      commit('setCharacters', {
+        master: response.data.characters,
+        saveData
+      })
+      commit('setMemoirs', {
+        master: response.data.memoir,
+        saveData
+      })
       commit('setInitialized')
       return {
         statusText: 'success',
@@ -292,18 +315,23 @@ export const actions = {
    * ローカルストレージから読み込む
    */
   load() {
-    const data = localStorage.getItem('character')
-    if (data) {
-      return JSON.parse(data)
+    const characters = JSON.parse(localStorage.getItem('character') || '[]')
+    const memoirs = JSON.parse(localStorage.getItem('memoir') || 'null')
+    return {
+      characters,
+      memoirs
     }
-    return []
   },
 
   /**
    * LocalStorageに保存する
    */
   save({ getters }) {
-    localStorage.setItem('character', JSON.stringify(getters.saveData))
+    localStorage.setItem(
+      'character',
+      JSON.stringify(getters.saveData.characters)
+    )
+    localStorage.setItem('memoir', JSON.stringify(getters.saveData.memoirs))
   },
 
   /**
@@ -316,10 +344,13 @@ export const actions = {
   }
 }
 
-// ストレージデータで上書きする
-function updateBySaveData(saveData, dat) {
-  if (saveData.length) {
-    const log = saveData.find((s) => s.id === dat.id)
+/**
+ * キャラクター情報をストレージデータで上書きする
+ * @param {{characters: Array, memoirs: ?Object}}
+ */
+function updateCharacterBySaveData(saveData, dat) {
+  if (saveData.characters.length) {
+    const log = saveData.characters.find((s) => s.id === dat.id)
     if (log) {
       // 念の為重複を削除する
       dat.visual = uniq(log.visual)
@@ -346,12 +377,27 @@ export const mutations = {
     character.ownership = ownership
   },
 
+  updateMemoir(state, { memoir, complete }) {
+    memoir.complete = complete
+  },
+
   setAreas(state, { master }) {
     state.areas = master
   },
 
   setDrops(state, { master }) {
     state.drops = master
+  },
+
+  setMemoirs(state, { master, saveData }) {
+    state.memoirs = master.map((m) => {
+      if (saveData.memoirs) {
+        m.complete = saveData.memoirs[m.id]
+      } else {
+        m.complete = false
+      }
+      return m
+    })
   },
 
   // 刀剣男士
@@ -363,7 +409,7 @@ export const mutations = {
       dat.ownership = []
       dat.extreme = false
 
-      dat = updateBySaveData(saveData, dat)
+      dat = updateCharacterBySaveData(saveData, dat)
 
       // イラスト初期値
       if (!dat.visual.length && dat.ownership.includes('通常')) {
@@ -380,7 +426,7 @@ export const mutations = {
         ex.visual = ['通常']
         ex.extreme = true
         dat.disabled = true // 通常をdisabled
-        ex = updateBySaveData(saveData, ex)
+        ex = updateCharacterBySaveData(saveData, ex)
         state.characters.push(ex)
       }
 
@@ -398,7 +444,7 @@ export const mutations = {
               ex.name = `${ex.name} 【${label}】`
               ex.visual = ['通常']
               ex.extreme = true
-              ex = updateBySaveData(saveData, ex)
+              ex = updateCharacterBySaveData(saveData, ex)
               state.characters.push(ex)
             }
           })

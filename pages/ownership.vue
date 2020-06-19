@@ -47,7 +47,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 export default {
-  name: 'Config',
+  name: 'Ownership',
   data() {
     return {
       columns: [

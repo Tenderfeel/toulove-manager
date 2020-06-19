@@ -22,11 +22,16 @@
           >
         </a-menu-item>
         <a-menu-item key="4">
+          <nuxt-link to="/memoir" exact
+            ><a-icon type="message" /><span>回想</span></nuxt-link
+          >
+        </a-menu-item>
+        <a-menu-item key="5">
           <nuxt-link to="/drop" exact
             ><a-icon type="cloud-download" /><span>ドロップ</span></nuxt-link
           >
         </a-menu-item>
-        <a-menu-item key="5">
+        <a-menu-item key="6">
           <nuxt-link to="/config" exact
             ><a-icon type="setting" /><span>設定</span></nuxt-link
           >
@@ -56,9 +61,14 @@ export default {
   computed: {
     selectedMenuKeys() {
       return String(
-        ['index', 'ownership', 'visual', 'drop', 'config'].findIndex((m) =>
-          this.$route.name.includes(m)
-        ) + 1
+        [
+          'index',
+          'ownership',
+          'visual',
+          'memoir',
+          'drop',
+          'config'
+        ].findIndex((m) => this.$route.name.includes(m)) + 1
       )
     }
   }
