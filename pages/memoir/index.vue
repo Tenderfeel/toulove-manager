@@ -20,7 +20,10 @@
             </div>
           </template>
           <template slot="complete" slot-scope="text, record">
-            <a-checkbox @change="onChange($event, record)" />
+            <a-checkbox
+              :checked="record.complete"
+              @change="onChange($event, record)"
+            />
           </template>
         </a-table>
       </div>
