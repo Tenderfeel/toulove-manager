@@ -95,6 +95,34 @@
         </a-card>
       </a-col>
     </a-row>
+    <a-row :gutter="[16, 8]">
+      <a-col :span="12">
+        <a-card title="回想収集状況">
+          <nuxt-link slot="extra" to="/memoir"
+            ><a-icon type="right"
+          /></nuxt-link>
+          <a-spin tip="Loading..." :spinning="!initialized">
+            <div class="flex">
+              <a-progress
+                :width="60"
+                type="circle"
+                :percent="
+                  Math.round((memoirRate.current / memoirRate.total) * 100)
+                "
+              />
+              <div class="flex-auto m4l">
+                <a-statistic title="収集" :value="memoirRate.current">
+                  <template slot="prefix"> </template>
+                  <template #suffix>
+                    <span> / {{ memoirRate.total }}</span>
+                  </template>
+                </a-statistic>
+              </div>
+            </div>
+          </a-spin>
+        </a-card>
+      </a-col>
+    </a-row>
   </a-layout-content>
 </template>
 
@@ -109,7 +137,7 @@ export default {
 
   computed: {
     ...mapState(['initialized', 'visuals', 'types', 'version']),
-    ...mapGetters(['collectionRate', 'visualRate'])
+    ...mapGetters(['collectionRate', 'visualRate', 'memoirRate'])
   },
   methods: {}
 }

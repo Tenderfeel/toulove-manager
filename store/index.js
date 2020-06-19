@@ -208,6 +208,20 @@ export const getters = {
   },
 
   /**
+   * 回想収集状況
+   */
+  memoirRate(state) {
+    const current = state.memoirs.reduce((acc, cur) => {
+      return acc + cur.complete
+    }, 0)
+
+    return {
+      current,
+      total: state.memoirs.length
+    }
+  },
+
+  /**
    * 入手済み男子
    * 通常のチェックで入手済みとみなす
    * @return {Array}
