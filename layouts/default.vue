@@ -32,6 +32,11 @@
           >
         </a-menu-item>
         <a-menu-item key="6">
+          <nuxt-link to="/area" exact
+            ><a-icon type="compass" /><span>エリア</span></nuxt-link
+          >
+        </a-menu-item>
+        <a-menu-item key="7">
           <nuxt-link to="/config" exact
             ><a-icon type="setting" /><span>設定</span></nuxt-link
           >
@@ -67,6 +72,7 @@ export default {
           'visual',
           'memoir',
           'drop',
+          'area',
           'config'
         ].findIndex((m) => this.$route.name.includes(m)) + 1
       )
