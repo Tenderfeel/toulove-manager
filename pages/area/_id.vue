@@ -67,17 +67,28 @@
                 {{ findEnemyById(enemyId).name }}
               </div>
             </template>
-            <a-table
+            <a-list
+              slot="expandedRowRender"
+              slot-scope="record"
+              :data-source="record.enemyData"
+              size="small"
+            >
+              <a-list-item slot="renderItem" slot-scope="item">
+                <img :src="`/images/enemy/${item.id}.png`" :alt="item.name" />
+              </a-list-item>
+            </a-list>
+            <!-- <a-table
               slot="expandedRowRender"
               slot-scope="record"
               :columns="innerColumns"
               :data-source="record.enemyData"
               :pagination="false"
+              :row-key="(record, index) => index"
             >
               <template slot="enemyImage" slot-scope="text">
                 <img :src="`/images/enemy/${text}.png`" :alt="record.name" />
               </template>
-            </a-table>
+            </a-table> -->
           </a-table>
         </div>
       </div>
