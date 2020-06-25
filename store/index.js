@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { uniq, without } from 'lodash'
 
 const MASTER_API_URL =
@@ -260,12 +259,25 @@ export const getters = {
     }
   },
 
+  /**
+   * IDでキャラを探す
+   */
   findCharacterById: (state) => (id) => {
     return state.characters.find((char) => char.id === id)
   },
 
+  /**
+   * IDでドロップデータを探す
+   */
   findDropById: (state) => (id) => {
     return state.drops.find((drop) => drop.id === id)
+  },
+
+  /**
+   * IDでエリアデータを探す
+   */
+  findAreaById: (state) => (id) => {
+    return state.areas.find((area) => `${area.id}-${area.map}` === id) || {}
   }
 }
 export const actions = {
@@ -275,7 +287,8 @@ export const actions = {
   async getData({ commit, dispatch }) {
     console.log('🍡 Get master data form API...')
     try {
-      const response = await axios.get(MASTER_API_URL)
+      const response = await this.$axios.get(process.env.MASTER_API_URL)
+
       const saveData = await dispatch('load')
       commit('setCharacters', { master: response.data.characters, saveData })
       commit('setAreas', { master: response.data.areas })
@@ -301,7 +314,7 @@ export const actions = {
    */
   async importData({ commit }, saveData) {
     try {
-      const response = await axios.get(MASTER_API_URL)
+      const response = await this.$axios.get(MASTER_API_URL)
 
       commit('setCharacters', {
         master: response.data.characters,

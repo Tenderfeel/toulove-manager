@@ -10,7 +10,8 @@ export default {
   env: {
     VERSION: p.version,
     BASE_URL: process.env.BASE_URL,
-    SITE_NAME
+    SITE_NAME,
+    MASTER_API_URL: process.env.MASTER_API_URL
   },
 
   /*
