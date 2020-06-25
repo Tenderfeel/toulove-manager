@@ -91,11 +91,17 @@ import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'AreaDetail',
   async asyncData({ params: { id }, store, error, $axios }) {
-    if (!id || !/^\d-\d-\d$/.test(id)) {
+    if (!id || !/^\d-\d(-\d)*$/.test(id)) {
       return error({ message: '404 Not Found' })
     }
 
-    const [epochId, areaId, mapId] = id.split('-')
+    // eslint-disable-next-line
+    let [epochId, areaId, mapId] = id.split('-')
+    if (!mapId) {
+      mapId = 1
+    }
+
+    id = `${epochId}-${areaId}-${mapId}`
 
     const square = await store.dispatch('area/getSquareData', id)
 
@@ -107,7 +113,13 @@ export default {
         }
       })
     })
-    return { epochId, areaId, mapId, id, square }
+    return {
+      epochId,
+      areaId,
+      mapId,
+      id,
+      square
+    }
   },
   data() {
     return {

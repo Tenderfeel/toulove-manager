@@ -16,7 +16,9 @@
             slot-scope="text, record"
             :to="{
               name: 'area-id',
-              params: { id: `${record.id}-${record.map}` }
+              params: {
+                id: `${record.id}${record.map > 1 ? '-' + record.map : ''}`
+              }
             }"
             >{{ text }}</nuxt-link
           >
